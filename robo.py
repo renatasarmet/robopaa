@@ -1,12 +1,11 @@
 import sys
 import time
-from PyQt5.QtWidgets import (QMainWindow,QWidget, QToolTip, QMessageBox,
-    QPushButton,QLabel,QLineEdit,QGridLayout,QTextEdit,QTableWidgetItem,QLineEdit,QTableWidget,QVBoxLayout,
-                             QApplication)
-from PyQt5.QtGui import QFont,QColor
+
 from random import randint
 import copy
-
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 
 #Definindo o tabuleiro, cada célula possuindo ou não uma moeda
 def definir_tabuleiro(n_linhas, n_colunas):
@@ -133,13 +132,54 @@ class Geral(QWidget):
         self.initUI()
         self.vetoresBruto = []
         self.vetorSomas = []
+        self.vetorVolta = []
         
         
     def initUI(self):
         
-        QToolTip.setFont(QFont('SansSerif', 10))
-        grid = QGridLayout()
-        grid.setVerticalSpacing(1)
+        QToolTip.setFont(QFont('SansSerif', 13))
+        grid1 = QGridLayout()
+        grid1.setVerticalSpacing(10)
+        grid1.setHorizontalSpacing(10)
+        
+        grid2 = QGridLayout()
+        grid2.setVerticalSpacing(10)
+        grid2.setHorizontalSpacing(10)
+        
+        grid3 = QGridLayout()
+        grid3.setVerticalSpacing(10)
+        grid3.setHorizontalSpacing(10)
+        
+        grid4 = QGridLayout()
+        grid4.setVerticalSpacing(10)
+        grid4.setHorizontalSpacing(10)
+        
+        grid5 = QGridLayout()
+        grid5.setHorizontalSpacing(15)
+        
+        grid6 = QGridLayout()
+        grid6.setHorizontalSpacing(1)
+        
+        grid7 = QGridLayout()
+        grid7.setVerticalSpacing(20)
+        
+        grid8 = QGridLayout()
+        grid8.setVerticalSpacing(20)
+        
+        grid9 = QGridLayout()
+        grid9.setHorizontalSpacing(20)
+        
+        grid10 = QGridLayout()
+        grid10.setVerticalSpacing(20)
+        
+        titulo = QLabel('Algoritmo para o problema do robo e as moedas', self)
+        titulo.setAlignment(Qt.AlignCenter)
+        
+        configura = QLabel('Configurações do tabuleiro', self)
+        
+        bruto = QLabel('Algoritmo -  Bruto', self)
+        
+        pd = QLabel('Algoritmo -  Programação dinamica', self)
         
         lbl1 = QLabel('Digite o valor n do tabuleiro:', self)
         self.n = QLineEdit()
@@ -153,15 +193,7 @@ class Geral(QWidget):
         self.s1 = QLabel('0', self)
         self.s2 = QLabel('0', self)
         
-        lbl3 = QLabel('Tabuleiro Original:', self)
-        lbl4 = QLabel('Resultado', self)
-        
-        grid.addWidget(lbl1, 1, 0)
-        grid.addWidget(self.n, 1, 1)
-        grid.addWidget(lbl2, 2, 0)
-        grid.addWidget(self.m, 2, 1)
-        
-        
+      
         btn = QPushButton('Definir tabuleiro', self)
         btn.resize(btn.sizeHint())
         btn.clicked.connect(self.buttonClicked)
@@ -186,23 +218,57 @@ class Geral(QWidget):
         btn5.resize(btn.sizeHint())
         btn5.clicked.connect(self.proximaSoma)
         
-        grid.addWidget(btn, 4, 0)
-        grid.addWidget(btn1, 4, 1)
-        grid.addWidget(btn2, 4, 2)
-        grid.addWidget(btn3, 4, 3)
+        
+        #grid.addWidget(titulo, 0,1)
+
+        
         self.createTable(2,2)
-        grid.addWidget(lbl3,5,0)
-        grid.addWidget(lbl4,5,1)
-        grid.addWidget(self.tableWidget,6,0)
-        grid.addWidget(self.resultado,6,1) 
-        grid.addWidget(btn4, 7, 0)
-        grid.addWidget(btn5, 7, 1)
-        grid.addWidget(self.soma, 8, 0)
-        grid.addWidget(igual, 8, 1)
-        grid.addWidget(self.s1, 8, 2)
-        grid.addWidget(mais, 8, 3)
-        grid.addWidget(self.s2, 8, 4)
-        self.setLayout(grid)
+        
+
+        grid1.addWidget(lbl1, 1, 0)
+        grid1.addWidget(self.n, 1, 1)
+        grid1.addWidget(lbl2, 2, 0)
+        grid1.addWidget(self.m, 2, 1)
+        
+        
+        grid2.addWidget(btn, 0, 0)
+        grid2.addWidget(btn1, 1, 0)
+        
+        grid3.addLayout(grid1,0,0)
+        grid3.addLayout(grid2,1,0)
+        
+        
+        grid4.addLayout(grid3,0,0)
+        grid4.addWidget(self.tableWidget, 0, 1)
+        
+        grid5.addWidget(btn4,0,0)
+        grid5.addWidget(btn5,0,1)
+        
+        grid6.addWidget(self.soma,0,0)
+        grid6.addWidget(igual,0,1)
+        grid6.addWidget(self.s1,0,2)
+        grid6.addWidget(mais,0,3)
+        grid6.addWidget(self.s2 ,0,4)
+        
+        grid7.addLayout(grid5,0,0)
+        grid7.addLayout(grid6,1,0)
+        
+        grid8.addWidget(btn2,0,0)
+        grid8.addWidget(btn3,1,0)
+        
+        grid9.addLayout(grid8,0,0)
+        grid9.addWidget(self.resultado,0,1)
+        
+        grid10.addWidget(titulo,0,0)
+        grid10.addWidget(configura,1,0)
+        grid10.addLayout(grid4,2,0)
+        grid10.addWidget(bruto,3,0)
+        grid10.addLayout(grid7,4,0)
+        grid10.addWidget(pd,6,0)
+        grid10.addLayout(grid9,7,0)
+        
+        self.setLayout(grid10)
+        
         self.setWindowTitle('Trabalho de PAA')
         self.show()
 
@@ -226,6 +292,8 @@ class Geral(QWidget):
             self.tableWidget.insertColumn(i)
             self.resultado.insertColumn(i)
         self.zerarResultado()
+        self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.resultado.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
     def zerarResultado(self):
         linha = self.resultado.rowCount()
@@ -268,6 +336,7 @@ class Geral(QWidget):
         linha = self.tableWidget.rowCount()
         coluna = self.tableWidget.columnCount()
         m = caminhar(self,self.matriz,linha,coluna,linha,coluna)
+        self.setVetorSomas(m)
         self.corT = [-1,-1]
 
     def setColoracaoR(self,colora):
@@ -289,20 +358,28 @@ class Geral(QWidget):
         if(len(self.vetoresBruto) != 0):
             if(self.corT[0] != -1):
                 self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(100 ,100 ,100))
-            self.corT = self.vetoresBruto.pop(0)
-            somaA = self.vetorSomas.pop(0)
+            self.corT = self.vetoresBruto.pop(len(self.vetoresBruto) - 1)
+            self.vetorVolta.append(copy.deepcopy(self.corT))
             self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
-            self.s2.setText(self.tableWidget.item(self.corT[0],self.corT[1]).text())
-            self.s1.setText(str(somaA))
-            a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
-            self.soma.setText(str(a))
     
         else:
-            dlg = QMessageBox(None)
-            dlg.setWindowTitle("Alerta")
-            dlg.setIcon(QMessageBox.Information)
-            dlg.setText("Ultima soma já realizado")
-            dlg.exec_()
+            if(len(self.vetorVolta) != 0):
+                if(self.corT[0] != -1):
+                    self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(55 ,55 ,55))
+                self.corT = self.vetorVolta.pop(len(self.vetoresBruto) - 1)
+                self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
+            if(len(self.vetorSomas) != 0):
+                somaA = self.vetorSomas.pop(0)
+                self.s2.setText(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+                self.s1.setText(str(somaA))
+                a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+                self.soma.setText(str(a))
+            else:
+                dlg = QMessageBox(None)
+                dlg.setWindowTitle("Alerta")
+                dlg.setIcon(QMessageBox.Information)
+                dlg.setText("Ultima soma já realizado")
+                dlg.exec_()
         
         
     def proximaMatriz(self):
@@ -339,7 +416,8 @@ class Geral(QWidget):
         self.tableWidget.setColumnCount(m)
         self.resultado.setColumnCount(m)
         self.zerarResultado()
- 
+        self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.resultado.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         
         
 if __name__ == '__main__':
