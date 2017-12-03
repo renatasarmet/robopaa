@@ -381,8 +381,15 @@ class Geral(QWidget):
             somaA = self.vetorSomas.pop(0)
             self.s2.setText(self.tableWidget.item(self.corT[0],self.corT[1]).text())
             self.s1.setText(str(somaA))
-            a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
-            self.soma.setText(str(a))
+            if(len(self.vetorSomas) != 0):
+                a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+                self.soma.setText(str(a))
+            else:
+                dlg = QMessageBox(None)
+                dlg.setIcon(QMessageBox.Information)
+                dlg.setText("Maior valor: "+ str(somaA))
+                dlg.exec_()
+                
         else:
             dlg = QMessageBox(None)
             dlg.setWindowTitle("Alerta")
