@@ -39,17 +39,17 @@ def maior_qtd(matriz):
 def caminhar(geral,T, n_linhas, n_colunas, n, m):
     if n == 1 and m == 1:
         geral.setVetorBruto([n_linhas-1,n_colunas-1])
-        geral.setVetorVolta([n_linhas-1,n_colunas-1])
         geral.setVetorSomas(0)
         return int(T[n_linhas-1][n_colunas-1])
 
     # Se ainda nao for a última coluna
     if (m > 1):
         # Ve o caminho para direita
+        geral.setVetorSomas(0)
         geral.setVetorBruto([n_linhas - n, n_colunas - m])
         s = int(caminhar(geral,T,n_linhas, n_colunas, n, m-1))
         soma1 = int(T[n_linhas - n][n_colunas - m]) + s
-        geral.setVetorVolta([n_linhas - n, n_colunas - m])
+        geral.setVetorBruto([n_linhas - n, n_colunas - m])
         geral.setVetorSomas(s)
         
     else:
@@ -58,10 +58,11 @@ def caminhar(geral,T, n_linhas, n_colunas, n, m):
     # Se ainda não for a última linha
     if (n > 1):
          # Ve o caminho para baixo
+        geral.setVetorSomas(0)
         geral.setVetorBruto([n_linhas - n, n_colunas - m])
         s = int(caminhar(geral,T, n_linhas, n_colunas, n-1, m))
         soma0 = int(T[n_linhas - n][n_colunas - m]) + s
-        geral.setVetorVolta([n_linhas - n, n_colunas - m])
+        geral.setVetorBruto([n_linhas - n, n_colunas - m])
         geral.setVetorSomas(s)
     else:
         soma0 = 0
@@ -333,6 +334,11 @@ class Geral(QWidget):
         self.getMatriz()
         self.corT = [0,0]
         self.fMatriz = algoritmo(self,self.tableWidget.rowCount(),self.tableWidget.columnCount())
+        dlg = QMessageBox(None)
+        dlg.setWindowTitle("Alerta")
+        dlg.setIcon(QMessageBox.Information)
+        dlg.setText("Algoritmo já rodou.\nVocê já pode ver o 1 passo.")
+        dlg.exec_()
     
     def rodarAlgoritmoBruto(self):
         self.getMatriz()
@@ -341,6 +347,11 @@ class Geral(QWidget):
         m = caminhar(self,self.matriz,linha,coluna,linha,coluna)
         self.setVetorSomas(m)
         self.corT = [-1,-1]
+        dlg = QMessageBox(None)
+        dlg.setWindowTitle("Alerta")
+        dlg.setIcon(QMessageBox.Information)
+        dlg.setText("Algoritmo já rodou.\nVocê já pode ver o 1 passo.")
+        dlg.exec_()
 
     def setColoracaoR(self,colora):
         self.coloracaoR = colora
@@ -366,25 +377,18 @@ class Geral(QWidget):
                 self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(100 ,100 ,100))
             self.corT = self.vetoresBruto.pop(0)
             self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
-    
+        if(len(self.vetorSomas) != 0):
+            somaA = self.vetorSomas.pop(0)
+            self.s2.setText(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+            self.s1.setText(str(somaA))
+            a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+            self.soma.setText(str(a))
         else:
-            if(len(self.vetorVolta) != 0):
-                if(self.corT[0] != -1):
-                    self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(55 ,55 ,55))
-                self.corT = self.vetorVolta.pop(0)
-                self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
-            if(len(self.vetorSomas) != 0):
-                somaA = self.vetorSomas.pop(0)
-                self.s2.setText(self.tableWidget.item(self.corT[0],self.corT[1]).text())
-                self.s1.setText(str(somaA))
-                a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
-                self.soma.setText(str(a))
-            else:
-                dlg = QMessageBox(None)
-                dlg.setWindowTitle("Alerta")
-                dlg.setIcon(QMessageBox.Information)
-                dlg.setText("Ultima soma já realizado")
-                dlg.exec_()
+            dlg = QMessageBox(None)
+            dlg.setWindowTitle("Alerta")
+            dlg.setIcon(QMessageBox.Information)
+            dlg.setText("Ultima soma já realizado")
+            dlg.exec_()
         
         
     def proximaMatriz(self):
