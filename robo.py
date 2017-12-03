@@ -37,6 +37,39 @@ def print_matriz(matriz):
 def maior_qtd(matriz):
     return matriz[len(matriz)-1][len(matriz[0])-1]
 
+def caminhar(geral,T, n_linhas, n_colunas, n, m):
+    if n == 1 and m == 1:
+        geral.setVetorBruto([n_linhas-1,n_colunas-1])
+        geral.setVetorSomas(0)
+        return int(T[n_linhas-1][n_colunas-1])
+
+    # Se ainda nao for a última coluna
+    if (m > 1):
+        # Ve o caminho para direita
+        s = int(caminhar(geral,T,n_linhas, n_colunas, n, m-1))
+        soma1 = int(T[n_linhas - n][n_colunas - m]) + s
+        geral.setVetorBruto([n_linhas - n, n_colunas - m])
+        geral.setVetorSomas(s)
+        
+    else:
+        soma1 = 0
+
+    # Se ainda não for a última linha
+    if (n > 1):
+         # Ve o caminho para baixo
+        s = int(caminhar(geral,T, n_linhas, n_colunas, n-1, m))
+        soma0 = int(T[n_linhas - n][n_colunas - m]) + s
+        geral.setVetorBruto([n_linhas - n, n_colunas - m])
+        geral.setVetorSomas(s)
+    else:
+        soma0 = 0
+
+
+    if int(soma1) > int(soma0):
+        return int(soma1)
+    else:
+        return int(soma0)
+
 def algoritmo(geral,n,m):
     #Lendo informações de tamanho da tabela
     n_linhas = n
@@ -98,6 +131,8 @@ class Geral(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.vetoresBruto = []
+        self.vetorSomas = []
         
         
     def initUI(self):
@@ -111,7 +146,13 @@ class Geral(QWidget):
 
         lbl2 = QLabel('Digite o valor m do tabuleiro:', self)
         self.m = QLineEdit()
-
+        
+        self.soma = QLabel('0', self)
+        igual = QLabel('=', self)
+        mais = QLabel('+', self)
+        self.s1 = QLabel('0', self)
+        self.s2 = QLabel('0', self)
+        
         lbl3 = QLabel('Tabuleiro Original:', self)
         lbl4 = QLabel('Resultado', self)
         
@@ -137,6 +178,14 @@ class Geral(QWidget):
         btn3.resize(btn.sizeHint())
         btn3.clicked.connect(self.proximaMatriz)
         
+        btn4 = QPushButton('Rodar algoritmo bruto', self)
+        btn4.resize(btn.sizeHint())
+        btn4.clicked.connect(self.rodarAlgoritmoBruto)
+        
+        btn5 = QPushButton('Proxima soma', self)
+        btn5.resize(btn.sizeHint())
+        btn5.clicked.connect(self.proximaSoma)
+        
         grid.addWidget(btn, 4, 0)
         grid.addWidget(btn1, 4, 1)
         grid.addWidget(btn2, 4, 2)
@@ -146,6 +195,13 @@ class Geral(QWidget):
         grid.addWidget(lbl4,5,1)
         grid.addWidget(self.tableWidget,6,0)
         grid.addWidget(self.resultado,6,1) 
+        grid.addWidget(btn4, 7, 0)
+        grid.addWidget(btn5, 7, 1)
+        grid.addWidget(self.soma, 8, 0)
+        grid.addWidget(igual, 8, 1)
+        grid.addWidget(self.s1, 8, 2)
+        grid.addWidget(mais, 8, 3)
+        grid.addWidget(self.s2, 8, 4)
         self.setLayout(grid)
         self.setWindowTitle('Trabalho de PAA')
         self.show()
@@ -206,6 +262,13 @@ class Geral(QWidget):
         self.getMatriz()
         self.corT = [0,0]
         self.fMatriz = algoritmo(self,self.tableWidget.rowCount(),self.tableWidget.columnCount())
+    
+    def rodarAlgoritmoBruto(self):
+        self.getMatriz()
+        linha = self.tableWidget.rowCount()
+        coluna = self.tableWidget.columnCount()
+        m = caminhar(self,self.matriz,linha,coluna,linha,coluna)
+        self.corT = [-1,-1]
 
     def setColoracaoR(self,colora):
         self.coloracaoR = colora
@@ -215,6 +278,32 @@ class Geral(QWidget):
         
     def setColoracaoT(self,colora):
         self.coloracaoT = colora
+    
+    def setVetorBruto(self,m):
+        self.vetoresBruto.append(m)
+        
+    def setVetorSomas(self,s):
+        self.vetorSomas.append(s)
+        
+    def proximaSoma(self):
+        if(len(self.vetoresBruto) != 0):
+            if(self.corT[0] != -1):
+                self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(100 ,100 ,100))
+            self.corT = self.vetoresBruto.pop(0)
+            somaA = self.vetorSomas.pop(0)
+            self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
+            self.s2.setText(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+            self.s1.setText(str(somaA))
+            a = int(somaA) + int(self.tableWidget.item(self.corT[0],self.corT[1]).text())
+            self.soma.setText(str(a))
+    
+        else:
+            dlg = QMessageBox(None)
+            dlg.setWindowTitle("Alerta")
+            dlg.setIcon(QMessageBox.Information)
+            dlg.setText("Ultima soma já realizado")
+            dlg.exec_()
+        
         
     def proximaMatriz(self):
         if(len(self.fMatriz) != 0):
