@@ -39,15 +39,17 @@ def maior_qtd(matriz):
 def caminhar(geral,T, n_linhas, n_colunas, n, m):
     if n == 1 and m == 1:
         geral.setVetorBruto([n_linhas-1,n_colunas-1])
+        geral.setVetorVolta([n_linhas-1,n_colunas-1])
         geral.setVetorSomas(0)
         return int(T[n_linhas-1][n_colunas-1])
 
     # Se ainda nao for a última coluna
     if (m > 1):
         # Ve o caminho para direita
+        geral.setVetorBruto([n_linhas - n, n_colunas - m])
         s = int(caminhar(geral,T,n_linhas, n_colunas, n, m-1))
         soma1 = int(T[n_linhas - n][n_colunas - m]) + s
-        geral.setVetorBruto([n_linhas - n, n_colunas - m])
+        geral.setVetorVolta([n_linhas - n, n_colunas - m])
         geral.setVetorSomas(s)
         
     else:
@@ -56,9 +58,10 @@ def caminhar(geral,T, n_linhas, n_colunas, n, m):
     # Se ainda não for a última linha
     if (n > 1):
          # Ve o caminho para baixo
+        geral.setVetorBruto([n_linhas - n, n_colunas - m])
         s = int(caminhar(geral,T, n_linhas, n_colunas, n-1, m))
         soma0 = int(T[n_linhas - n][n_colunas - m]) + s
-        geral.setVetorBruto([n_linhas - n, n_colunas - m])
+        geral.setVetorVolta([n_linhas - n, n_colunas - m])
         geral.setVetorSomas(s)
     else:
         soma0 = 0
@@ -222,7 +225,7 @@ class Geral(QWidget):
         #grid.addWidget(titulo, 0,1)
 
         
-        self.createTable(2,2)
+        self.createTable(4,4)
         
 
         grid1.addWidget(lbl1, 1, 0)
@@ -351,6 +354,9 @@ class Geral(QWidget):
     def setVetorBruto(self,m):
         self.vetoresBruto.append(m)
         
+    def setVetorVolta(self,m):
+        self.vetorVolta.append(m)
+        
     def setVetorSomas(self,s):
         self.vetorSomas.append(s)
         
@@ -358,15 +364,14 @@ class Geral(QWidget):
         if(len(self.vetoresBruto) != 0):
             if(self.corT[0] != -1):
                 self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(100 ,100 ,100))
-            self.corT = self.vetoresBruto.pop(len(self.vetoresBruto) - 1)
-            self.vetorVolta.append(copy.deepcopy(self.corT))
+            self.corT = self.vetoresBruto.pop(0)
             self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
     
         else:
             if(len(self.vetorVolta) != 0):
                 if(self.corT[0] != -1):
                     self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(55 ,55 ,55))
-                self.corT = self.vetorVolta.pop(len(self.vetoresBruto) - 1)
+                self.corT = self.vetorVolta.pop(0)
                 self.tableWidget.item(self.corT[0],self.corT[1]).setBackground(QColor(173 ,255 ,47))
             if(len(self.vetorSomas) != 0):
                 somaA = self.vetorSomas.pop(0)
